@@ -65,8 +65,9 @@ const Forecast = (props) => {
                     maxLength="50"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
+                    className={classes.textInput}
                     />
-                <label>
+                <label className={classes.Radio} >
                     <input
                         type="radio"
                         name="units"
@@ -76,7 +77,7 @@ const Forecast = (props) => {
                         />
                     Fahrenheit
                 </label>
-                <label>
+                <label className={classes.Radio}>
                     <input
                         type="radio"
                         name="units"
@@ -86,7 +87,7 @@ const Forecast = (props) => {
                         />
                     Celcius
                 </label>
-                <button type="submit">Get Forecast</button>
+                <button className={classes.Button} type="submit"  >Get Forecast</button>
             </form>
 </div>
    )
