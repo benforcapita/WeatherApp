@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Conditions from './Conditions';
 import axios from 'axios';
 
+
+
 const Forecast = (props) => {
     const options1 = {
         url: process.env.REACT_APP_API_URL+process.env.REACT_APP_API_KEY+'&q='+props.cityName+'&language=en-us&details=true',
@@ -28,6 +30,8 @@ const Forecast = (props) => {
           }
         }
     };
+    let [city, setCity] = useState('');
+    let [unit, setUnit] = useState('metric');
     let [LocalizationResponseObj, setLocalizationResponseObj] = useState({});
     let [responseObjDaily, setResponseDailyObj] = useState({});
     let [responseObjHourly, setResponseHourlyObj] = useState({});

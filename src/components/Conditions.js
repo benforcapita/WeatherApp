@@ -18,8 +18,7 @@ const Conditions = (props) => {
                         {props.LocalizationResponseObj["data"][0]["LocalizedName"]}
                     </strong>
                 </p>
-                <p> It is currently 
-                {Math.round(((props.responseObjHourly["data"][0].Temperature.Value)-32)*5/9)} degrees out with {props.responseObjDaily["data"]["Headline"]["Text"] }.
+                <p> It is currently {Math.round(((props.responseObjHourly["data"][0].Temperature.Value)-32)*5/9)} degrees out with {props.responseObjDaily["data"]["Headline"]["Text"] }.
                 </p>
             </div>:
             null   
