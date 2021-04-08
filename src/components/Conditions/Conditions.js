@@ -12,6 +12,8 @@ const Conditions = (props) => {
 
     return (
         <div className={classes.Wrapper}>
+           {props.error && <small className={classes.Small} >Please enter a valid city.</small>}
+           {props.loading && <div className={classes.Loader}>Loading...</div>}
             {canRender?
             <div>
                 <p>

@@ -39,18 +39,44 @@ const Forecast = (props) => {
   };
    function getForecast(e) {
     e.preventDefault();
+    if (!city) {
+      return setError(true);
+  }
     axios(options_localization_code).then(response => response)
     .then(response => {
+      if (response.data.length === 0) {
+        throw new Error()
+    }
+      setError(false);
         setLocalizationResponseObj(response);
          axios(options_DAILY(response["data"][0]["Key"])).then(response => response).then(response =>
-            {  
+            {
+              if (response.data.length === 0) {
+                throw new Error()
+            }
+
                 setResponseDailyObj(response)
-            })
+            }).catch(err => {
+              setError(true);
+              setLoading(false);
+              console.log(err.message);
+          });
         axios(options_HOURLY(response["data"][0]["Key"])).then(response => response).then(response =>
                 {  
+                  if (response.status !== 200) {
+                    throw new Error()
+                }
                     setResponseHourlyObj(response)
-                })
-    })
+                }).catch(err => {
+                  setError(true);
+                  setLoading(false);
+                  console.log(err.message);
+              });
+    }).catch(err => {
+      setError(true);
+      setLoading(false);
+      console.log(err.message);
+  });
    }
 
    return (
@@ -88,7 +114,7 @@ const Forecast = (props) => {
                 <button disabled={!city} className={(!city)?classes.Button_disabled:classes.Button} type="submit" >Get Forecast</button>
             </form>
             <div>
-        <Conditions LocalizationResponseObj = {LocalizationResponseObj} responseObjDaily = {responseObjDaily} responseObjHourly = {responseObjHourly}/>
+        <Conditions LocalizationResponseObj = {LocalizationResponseObj} responseObjDaily = {responseObjDaily} responseObjHourly = {responseObjHourly} error={error} loading={loading} />
     </div>
 </div>
    )
