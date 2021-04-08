@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import Conditions from './Conditions';
+import Conditions from '../Conditions';
 import axios from 'axios';
+import classes from './Forecast.module.css';
 
 const Forecast = (props) => {
    
