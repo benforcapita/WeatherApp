@@ -25,3 +25,14 @@
     cursor: pointer;
     margin: 5px auto;
 }
+.Button_disabled{
+    display: block;
+    margin: 10px auto;
+    padding: .5rem;
+    font-size: 1em;
+    background: rgba(0, 139, 139, 0.308);
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    margin: 5px auto;
+}

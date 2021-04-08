@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import classes from './Conditions.module.css'
 
 const Conditions = (props) => {
 
@@ -10,7 +11,7 @@ const Conditions = (props) => {
      }, [props.LocalizationResponseObj, props.responseObjHourly, props.responseObjDaily]);
 
     return (
-        <div>
+        <div className={classes.Wrapper}>
             {canRender?
             <div>
                 <p>

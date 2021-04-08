@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Conditions from '../Conditions';
+import Conditions from '../Conditions/Conditions.js';
 import axios from 'axios';
 import classes from './Forecast.module.css';
 
@@ -7,7 +7,8 @@ const Forecast = (props) => {
    
     let [city, setCity] = useState('');
     let [unit, setUnit] = useState('metric');
-    const uriEncodedCity = encodeURIComponent(city);
+    let [error, setError] = useState(false);
+    let [loading, setLoading] = useState(false);
     let [LocalizationResponseObj, setLocalizationResponseObj] = useState({});
     let [responseObjDaily, setResponseDailyObj] = useState({});
     let [responseObjHourly, setResponseHourlyObj] = useState({});
@@ -55,9 +56,6 @@ const Forecast = (props) => {
    return (
     <div>
         <h2>Find Current Weather Conditions</h2>
-    <div>
-        <Conditions LocalizationResponseObj = {LocalizationResponseObj} responseObjDaily = {responseObjDaily} responseObjHourly = {responseObjHourly}/>
-    </div>
     <form onSubmit={getForecast}>
                 <input
                     type="text"
@@ -87,8 +85,11 @@ const Forecast = (props) => {
                         />
                     Celcius
                 </label>
-                <button className={classes.Button} type="submit"  >Get Forecast</button>
+                <button disabled={!city} className={(!city)?classes.Button_disabled:classes.Button} type="submit" >Get Forecast</button>
             </form>
+            <div>
+        <Conditions LocalizationResponseObj = {LocalizationResponseObj} responseObjDaily = {responseObjDaily} responseObjHourly = {responseObjHourly}/>
+    </div>
 </div>
    )
 }
