@@ -4,12 +4,11 @@ import MyRouter from './components/MyRouter/MyRouter'
 
 function App() {
   return (
-    
-    <div className="App">
-      <main>
-         <MyRouter/>
-        </main>
-    </div>
+      <div className="App">
+        <main>
+          <MyRouter/>
+          </main>
+      </div>
   );
 }
 

@@ -12,8 +12,10 @@ const Forecast = (props) => {
     let [LocalizationResponseObj, setLocalizationResponseObj] = useState({});
     let [responseObjDaily, setResponseDailyObj] = useState({});
     let [responseObjHourly, setResponseHourlyObj] = useState({});
+    const API = {'API_URL':'http://dataservice.accuweather.com/locations/v1/cities/search?apikey=','HOURLY_API_URL':'http://dataservice.accuweather.com/forecasts/v1/hourly/1hour/','DAILY_API_URL':'http://dataservice.accuweather.com/forecasts/v1/daily/5day/'}
+    const API_KEY = 'ecKqGR09esbXGRNOLZJA59DpCdOmvHvt'
     const options_localization_code = {
-      url: process.env.REACT_APP_API_URL+process.env.REACT_APP_API_KEY+'&q='+city+'&language=en-us&details=true',
+      url: API['API_URL']+API_KEY+'&q='+city+'&language=en-us&details=true',
       method: 'GET',
       headers: {
         'Access-Control-Allow-Origin': '*'
@@ -21,7 +23,7 @@ const Forecast = (props) => {
     };
     const options_DAILY = function(cityLocation) {
         return{
-          url: process.env.REACT_APP_API_DAILY_API_URL+cityLocation+"?apikey="+process.env.REACT_APP_API_KEY+"&language=en-us&details=true",
+          url: API['DAILY_API_URL']+cityLocation+"?apikey="+API_KEY+"&language=en-us&details=true",
           method: 'GET',
           headers: {
             'Access-Control-Allow-Origin': '*'
@@ -30,7 +32,7 @@ const Forecast = (props) => {
     };
     const options_HOURLY = function(cityLocation) {
       return{
-        url: process.env.REACT_APP_API_HOURLY_API_URL+cityLocation+"?apikey="+process.env.REACT_APP_API_KEY+"&language=en-us&details=true",
+        url: API['HOURLY_API_URL']+cityLocation+"?apikey="+API_KEY+"&language=en-us&details=true",
         method: 'GET',
         headers: {
           'Access-Control-Allow-Origin': '*'

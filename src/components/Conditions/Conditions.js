@@ -6,8 +6,13 @@ const Conditions = (props) => {
     let [canRender, SetCanRender] = useState(false);
     React.useEffect((canRender)=> {
           
-            SetCanRender(canRender?true:
-                (props.LocalizationResponseObj.hasOwnProperty("data")&&props.responseObjHourly.hasOwnProperty("data")&&props.responseObjDaily.hasOwnProperty("data")))
+            let result =(props.LocalizationResponseObj.hasOwnProperty("data")&&props.responseObjHourly.hasOwnProperty("data")&&props.responseObjDaily.hasOwnProperty("data")) 
+            SetCanRender(canRender?true:result)
+            if(result)
+            {
+                localStorage.setItem(props.LocalizationResponseObj["data"][0]["LocalizedName"], JSON.stringify({'Degrees':Math.round(((props.responseObjHourly["data"][0].Temperature.Value)-32)*5/9),'Desc':props.responseObjDaily["data"]["Headline"]["Text"]}));
+            }
+                
      }, [props.LocalizationResponseObj, props.responseObjHourly, props.responseObjDaily]);
 
     return (
