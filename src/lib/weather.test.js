@@ -1,0 +1,21 @@
+import { describe, expect, it, vi } from 'vitest';
+import { searchCities, fetchWeather, formatTemperature, formatTime, dayLabel, weatherDescription, weatherKind, isStale, validateForecast } from './weather';
+import { fixture, berlin } from '../../tests/fixtures';
+describe('weather contract', () => {
+ it('searches an encoded city over HTTPS without credentials and keeps distinct cities', async () => {
+  const fetcher=vi.fn().mockResolvedValue({ok:true,json:async()=>({results:[berlin,{...berlin,id:2,country:'United States'}]})});
+  const result=await searchCities('Berlin & more',undefined,fetcher);
+  expect(result).toHaveLength(2); const url=new URL(fetcher.mock.calls[0][0]); expect(url.protocol).toBe('https:'); expect(url.searchParams.get('name')).toBe('Berlin & more'); expect(url.searchParams.has('apikey')).toBe(false);
+ });
+ it('handles empty searches and no results', async () => { const fetcher=vi.fn().mockResolvedValue({ok:true,json:async()=>({})}); expect(await searchCities('x',null,fetcher)).toEqual([]); expect(fetcher).not.toHaveBeenCalled(); expect(await searchCities('Unknown',null,fetcher)).toEqual([]); });
+ it('rejects malformed geocoding and unsafe coordinates', async()=>{await expect(searchCities('Berlin',null,async()=>({ok:true,json:async()=>({results:'invalid'})}))).rejects.toThrow(/unexpected/i);await expect(fetchWeather({...berlin,latitude:999})).rejects.toThrow(/location/i);});
+ it('requests a single atomic forecast in canonical metric units and UNIX time',async()=>{const fetcher=vi.fn().mockResolvedValue({ok:true,json:async()=>fixture()}); const result=await fetchWeather(berlin,undefined,fetcher); expect(result.timezone).toBe('Europe/Berlin'); const url=new URL(fetcher.mock.calls[0][0]);expect(url.searchParams.get('timeformat')).toBe('unixtime');expect(url.searchParams.get('timezone')).toBe('auto');expect(url.searchParams.get('temperature_unit')).toBe('celsius');});
+ it('returns actionable provider and network errors',async()=>{await expect(searchCities('Berlin',null,async()=>({ok:false,status:429}))).rejects.toThrow(/busy/i);await expect(fetchWeather(berlin,null,async()=>{throw new TypeError('Failed to fetch')})).rejects.toThrow(/connect/i);});
+ it('rejects empty, partial, and invalid-timezone forecasts, without treating null values as zero',()=>{expect(()=>validateForecast({})).toThrow();expect(()=>validateForecast({...fixture(),timezone:'invalid'})).toThrow();const f=fixture();f.daily.temperature_2m_max.pop();expect(()=>validateForecast(f)).toThrow();const n=fixture();n.current.temperature_2m=null;expect(validateForecast(n).current.temperature_2m).toBeNull();expect(formatTemperature(null,'celsius')).toBe('—');});
+ it('rejects invalid sunrise instants and safely formats absent or invalid times',()=>{const f=fixture();f.daily.sunrise[0]=1e30;expect(()=>validateForecast(f)).toThrow();expect(formatTime(1e30,'Europe/Berlin')).toBe('—');expect(formatTime(null,'Europe/Berlin')).toBe('—');});
+ it('converts temperatures consistently including zero and negative values',()=>{expect(formatTemperature(0,'fahrenheit')).toBe('32°');expect(formatTemperature(-40,'fahrenheit')).toBe('-40°');expect(formatTemperature(19.6,'celsius')).toBe('20°');});
+ it('formats city time independently of browser timezone and handles DST',()=>{const t=Date.parse('2026-11-01T06:30:00Z')/1000;expect(formatTime(t,'America/New_York')).toBe('1:30 AM');expect(formatTime(t,'Asia/Tokyo')).toBe('3:30 PM');});
+ it('preserves provider daily calendar dates across DST offsets',()=>{expect(dayLabel(Date.parse('2026-11-02T04:00:00Z')/1000,-14400)).toBe('Mon, Nov 2');});
+ it('marks old, future, and outdated model data stale',()=>{const now=Date.now();expect(isStale({receivedAt:now,current:{time:now/1000}},now)).toBe(false);expect(isStale({receivedAt:now-31*60000,current:{time:now/1000}},now)).toBe(true);expect(isStale({receivedAt:now,current:{time:now/1000-3*3600}},now)).toBe(true);expect(isStale({receivedAt:now+3600000,current:{time:now/1000}},now)).toBe(true);});
+ it('labels unknown weather codes honestly',()=>{expect(weatherDescription(999)).toBe('Conditions unavailable');expect(weatherKind(999)).toBe('unknown');expect(weatherKind(98)).toBe('unknown');expect(weatherDescription(0)).toBe('Clear sky');});
+});
