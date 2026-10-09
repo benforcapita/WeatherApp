@@ -12,6 +12,7 @@ Use Node 22.12+ or Node 24, then:
 npm ci
 npm run dev
 npm run check
+npm run build:demo
 npm run test:browser
 ```
 
@@ -20,7 +21,7 @@ npm run test:browser
 ## Two explicit modes
 
 - **Personal-use live app:** `npm run dev` or `npm run build`. City queries go to Open-Meteo geocoding; selected city coordinates go to its forecast API. No browser geolocation, account, analytics, or keys. The app makes no provider request until you choose a place or search, except refreshing your previously selected place on a later visit.
-- **Portfolio sample demo:** `npm run build:demo`. This build cannot call live weather/geocoding endpoints. Search explores three sample cities; forecast values are synthetic and labeled "Sample data" throughout. The sample dates are an illustrative window anchored to the day of use, not a forecast. Demo and personal-use storage are separate. A query parameter cannot enable live requests in the sample build.
+- **Portfolio sample demo:** `npm run build:demo` creates `dist-demo/`. This build cannot call live weather/geocoding endpoints. Search explores three sample cities; forecast values are synthetic and labeled "Sample data" throughout. The sample dates are an illustrative window anchored to the day of use, not a forecast. Demo and personal-use storage are separate. A query parameter cannot enable live requests in the sample build.
 
 A sample demo demonstrates real interactions and persistence. It is never represented as a live-weather verification.
 
@@ -48,6 +49,3 @@ Unit/component tests cover provider contracts, malformed responses, null values,
 
 Browser tests use sandboxed Chromium. Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to an installed official Chrome/Chromium if needed. Do not disable the sandbox or change host security settings to run tests.
 
-## Historical repository hygiene
-
-Legacy credential-bearing configuration and checked-in build artifacts are removed from this branch. This does not remove prior Git history or revoke anything. Repository owners should review any previously exposed provider credential privately; no validity testing, rotation, or history rewriting is performed here.
